@@ -1,9 +1,11 @@
-import { Input, Modal, Select, Switch, Table } from 'antd';
+import { Button, Input, Modal, Select, Switch, Table } from 'antd';
 import { useState } from 'react';
-import {EditOutlined, DeleteOutlined} from '@ant-design/icons';
+import {EditOutlined, DeleteOutlined, SearchOutlined} from '@ant-design/icons';
 
 
 function AntTable() {
+
+    const [searchText, setSearchText] = useState('')
 
     const [sortAscending, setSortAscending] = useState(true)
 
@@ -163,6 +165,33 @@ function AntTable() {
           dataIndex: "title",
           sorter: (a, b)=>{
             return a.title > b.title?1:a.title === b.title?0:-1
+          },
+          filterDropdown: ({selectedKeys, setSelectedKeys, confirm, clearFilters})=>{
+            return <>
+              <Input       
+                  autoFocus 
+                  placeholder='Type text here' 
+                  value={selectedKeys[0]}
+                  onChange={(e)=>{
+                    setSelectedKeys(e.target.value?[e.target.value]:[])
+                    confirm({closeDropdown: false})
+                  }}
+                  onPressEnter={()=>{
+                    confirm()
+                  }} 
+                  onBlur={()=>{
+                    confirm()
+                 }}></Input>
+              <Button onClick={()=>{confirm()}} type='primary'>Search</Button>
+              <Button onClick={()=>{clearFilters()}} type='primary' danger>Clear</Button>
+            </>
+          },
+          filterIcon: ()=>{
+            return <SearchOutlined />
+          },
+          // filteredValue: [searchText],
+          onFilter: (value, record)=>{
+            return record.title.toLowerCase().includes(value.toLowerCase())
           }
         },
         {
@@ -170,6 +199,32 @@ function AntTable() {
           dataIndex: "genre",
           sorter: (a, b)=>{
             return a.genre > b.genre?1:a.genre === b.genre?0:-1
+          },
+          filterDropdown: ({selectedKeys, setSelectedKeys, confirm, clearFilters})=>{
+            return <>
+              <Input       
+                  autoFocus 
+                  placeholder='Type text here' 
+                  value={selectedKeys[0]}
+                  onChange={(e)=>{
+                    setSelectedKeys(e.target.value?[e.target.value]:[])
+                    confirm({closeDropdown: false})
+                  }}
+                  onPressEnter={()=>{
+                    confirm()
+                  }} 
+                  onBlur={()=>{
+                    confirm()
+                 }}></Input>
+              <Button onClick={()=>{confirm()}} type='primary'>Search</Button>
+              <Button onClick={()=>{clearFilters()}} type='primary' danger>Clear</Button>
+            </>
+          },
+          filterIcon: ()=>{
+            return <SearchOutlined />
+          },
+          onFilter: (value, record)=>{
+            return record.genre.toLowerCase().includes(value.toLowerCase())
           }
         },
         {
@@ -261,6 +316,13 @@ function AntTable() {
                     <Select.Option value='rate'>Rate</Select.Option>
                 </Select>
                 <Switch checkedChildren='Asc' unCheckedChildren='Desc' defaultChecked={sortAscending} onChange={setSortAscending}></Switch>
+                <Input.Search placeholder='Search here...'
+                              onSearch={(value)=>{
+                                setSearchText(value)
+                              }}
+                              onChange={(e)=>{
+                                setSearchText(e.target.value)
+                              }}/>
             </div>
             
             <Table
